@@ -3,6 +3,8 @@ Project 1 包括两个小项目
 * n-Puzzle Problem
 * Tic-tac-toe
 
+---
+
 # n-Puzzle Problem 项目说明
 
 ## 简介
