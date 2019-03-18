@@ -56,7 +56,7 @@ class PuzzleState(object):
         return row, col
 
     def num_pos(self, num):
-	    """
+        """
         Find the 'num' position of current state
         :return:
             row: 'num' row index, '-1' indicates the current state may be invalid
@@ -345,6 +345,70 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
         moves: list of Move. e.g: move_list = [Move.Up, Move.Left, Move.Right, Move.Up]
     """
 
+    # Auxiliary functions
+    def find_front_node(open_list):
+        '''
+        Find best front node by g & h
+        '''
+        min_cost = open_list[0].h + open_list[0].g
+        for i in range(len(open_list)):
+            if open_list[i].h + open_list[i].g < min_cost:
+                min_cost = open_list[i].h + open_list[i].g
+                curr_state = open_list[i]
+                curr_idx = i
+        return curr_idx, curr_state
+
+
+    def state_in_list(state, list):
+        pass
+        return in_list, match_state
+
+    def get_path(curr_state):
+        # Initiate an empty move list
+        moves = []
+
+        # Fill in path recursively
+        if curr_state.pre_move == None:
+            return moves
+        else:
+            moves.append(curr_state.pre_move)
+            moves += get_path(curr_state.pre_state)
+
+        return moves
+
+    def expand_state(curr_state):
+        pass
+        return childs
+
+    def update_cost(child_state, dst_state, metric='euclidean'):
+        '''
+        Update child_state.h and child_state.g
+        '''
+        # Euclidean distance
+        if metric == 'euclidean':
+            curr_vec = np.reshape(child_state, (-1, 1))
+            dst_vec = np.reshape(dst_state, (-1, 1))
+            forward_cost = np.linalg.norm(curr_vec-dst_vec)
+
+        # Blank position metric
+        elif metric == 'blank_pos':
+            dst_pos = np.argwhere(dst_state==-1)
+            curr_pos = np.argwhere(curr_state==-1)
+            forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=1)
+            
+        # Chebyshev distance
+        elif metric == 'chebyshev':
+            dst_pos = np.argwhere(dst_state==-1)
+            curr_pos = np.argwhere(curr_state==-1)
+            forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=np.inf)
+
+        
+        # Update child state properties
+        child_state.h = forward_cost
+        child_state.g += 1
+        
+        return child_state
+
     start_state = init_state.clone()
     end_state = dst_state.clone()
 
@@ -369,7 +433,9 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
         # Check whether found solution
         if curr_state == dst_state:
             moves = get_path(curr_state)
-            return moves
+            # Arrange move order
+            moves.reverse()
+            return moves    # 'moves' is a move_list of int
 
         # Expand node
         childs = expand_state(curr_state)
@@ -382,7 +448,7 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
                 continue
 
             # Assign cost to child state. You can also do this in Expand operation
-            child_state = update_cost(child_state, dst_state)
+            child_state = update_cost(child_state, dst_state, 'euclidean')
 
             # Find a better state in open_list
             in_list, match_state = state_in_list(child_state, open_list)
