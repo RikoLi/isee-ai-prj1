@@ -5,7 +5,11 @@
 ---
 
 ## N-Puzzle Problem
-TODO...
+### Prerequisite
+* n_puzzle_state_main.py
+* puzzle_state.py
+
+The implementation of the game process is given. The main goal of the project is to determine several heuristic functions.
 
 ### Heuristics Design
 To run the A* search algorithm, we need to define appropriate heuristics. Any possible heuristics should have following properties:
@@ -48,7 +52,7 @@ g_1 & g_2 & \dots & g_N
 \end{bmatrix}^T$ of a playboard of size $n$,
 
 $$
-h(\bold{s}) = ||\bold{s} - \bold{g}||
+h(\bold{s}) = ||\bold{s} - \bold{g}||_2
 $$
 
 where $h(\bold{s})$ is the heuristic of state $\bold{s}$ and $N=n^2$.
@@ -113,7 +117,7 @@ where $h^*(x,y)$ is the true cost in the game.
 Therefore, $h(x,y)$ can be used as a heuristic function.
 
 ### Performance
-
+To evaluate the performance of aforementioned 3 heuristic functions,
 
 
 ---
