@@ -351,23 +351,27 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
         Find best front node by g & h
         '''
         min_cost = open_list[0].h + open_list[0].g
+        curr_state = open_list[0]
+        curr_idx = 0
+        
         for i in range(len(open_list)):
             if open_list[i].h + open_list[i].g < min_cost:
                 min_cost = open_list[i].h + open_list[i].g
                 curr_state = open_list[i]
                 curr_idx = i
+                
         return curr_idx, curr_state
 
 
     def state_in_list(state, state_list):
+        in_list = False
+        match_state = None
+        
         for each in state_list:
             if each == state:
                 in_list = True
                 match_state = each
                 break
-            else:
-                in_list = False
-                match_state = None
 
         return in_list, match_state
 
@@ -402,20 +406,20 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
         '''
         # Euclidean distance
         if metric == 'euclidean':
-            curr_vec = np.reshape(child_state, (-1, 1))
-            dst_vec = np.reshape(dst_state, (-1, 1))
+            curr_vec = np.reshape(child_state.state, (-1, 1))
+            dst_vec = np.reshape(dst_state.state, (-1, 1))
             forward_cost = np.linalg.norm(curr_vec-dst_vec)
 
         # Blank position metric
         elif metric == 'blank_pos':
-            dst_pos = np.argwhere(dst_state==-1)
-            curr_pos = np.argwhere(curr_state==-1)
+            dst_pos = np.argwhere(dst_state.state==-1)
+            curr_pos = np.argwhere(curr_state.state==-1)
             forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=1)
             
         # Chebyshev distance
         elif metric == 'chebyshev':
-            dst_pos = np.argwhere(dst_state==-1)
-            curr_pos = np.argwhere(curr_state==-1)
+            dst_pos = np.argwhere(dst_state.state==-1)
+            curr_pos = np.argwhere(curr_state.state==-1)
             forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=np.inf)
 
         
