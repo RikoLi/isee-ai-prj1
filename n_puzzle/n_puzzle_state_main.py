@@ -18,7 +18,7 @@ def main():
     init_state.state = np.asarray(dst).reshape(square_size, square_size)
 
     # move_list = generate_moves(100)
-    move_list = generate_moves(10)
+    move_list = generate_moves(30)
     init_state.state = runs(init_state, move_list).state
 
     # Set a determined destination state

@@ -423,6 +423,9 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
             curr_pos = np.argwhere(curr_state.state==-1)
             forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=np.inf)
 
+        # More heuristic functions...
+        pass
+
         
         # Update child state properties
         child_state.h = forward_cost
