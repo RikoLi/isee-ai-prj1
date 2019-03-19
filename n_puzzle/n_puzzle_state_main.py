@@ -18,7 +18,7 @@ def main():
     init_state.state = np.asarray(dst).reshape(square_size, square_size)
 
     # move_list = generate_moves(100)
-    move_list = generate_moves(30)
+    move_list = generate_moves(100)
     init_state.state = runs(init_state, move_list).state
 
     # Set a determined destination state
@@ -26,7 +26,7 @@ def main():
     dst_state.state = np.asarray(dst).reshape(square_size, square_size)
 
     # Find the path from 'init_state' to 'dst_state'
-    move_list = astar_search_for_puzzle_problem(init_state, dst_state, heuristics='chebyshev')
+    move_list = astar_search_for_puzzle_problem(init_state, dst_state, heuristics='tiles_pos')
 
     move_list = convert_moves(move_list)
 

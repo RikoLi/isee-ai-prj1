@@ -423,8 +423,16 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
             curr_pos = np.argwhere(curr_state.state==-1)
             forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=np.inf)
 
-        # More heuristic functions...
-        pass
+        # The sum of distances of the tiles from their goal positions
+        elif metric == 'tiles_pos':
+            dst_pos = np.argwhere(dst_state.state==-1)
+            curr_pos = np.argwhere(curr_state.state==-1)
+            forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=1)
+            
+            for i in range(dst_state.square_size-1):
+                dst_pos = np.argwhere(dst_state.state==(i+1))
+                curr_pos = np.argwhere(curr_state.state==(i+1))
+                forward_cost += np.linalg.norm(dst_pos-curr_pos, ord=1)
 
         
         # Update child state properties
