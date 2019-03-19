@@ -336,11 +336,12 @@ NOTICE:
    
 3. It's just a simple example of A-Star search. You can implement this function in your own design.  
 """
-def astar_search_for_puzzle_problem(init_state, dst_state):
+def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean'):
     """
     Use AStar-search to find the path from init_state to dst_state
     :param init_state:  Initial puzzle state
     :param dst_state:   Destination puzzle state
+    :param heuristics:  Heuristic function
     :return:  All operations needed to be performed from init_state to dst_state
         moves: list of Move. e.g: move_list = [Move.Up, Move.Left, Move.Right, Move.Up]
     """
@@ -400,7 +401,7 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
         
         return childs
 
-    def update_cost(child_state, dst_state, metric='euclidean'):
+    def update_cost(child_state, dst_state, metric):
         '''
         Update child_state.h and child_state.g
         '''
@@ -452,10 +453,10 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
 
         # Check whether found solution
         if curr_state == dst_state:
-            moves = get_path(curr_state)
+            move_list = get_path(curr_state)
             # Arrange move order
-            moves.reverse()
-            return moves    # 'moves' is a move_list of int
+            move_list.reverse()
+            return move_list    # 'moves' is a move_list of int
 
         # Expand node
         childs = expand_state(curr_state)
@@ -468,7 +469,7 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
                 continue
 
             # Assign cost to child state. You can also do this in Expand operation
-            child_state = update_cost(child_state, dst_state, 'euclidean')
+            child_state = update_cost(child_state, dst_state, heuristics)
 
             # Find a better state in open_list
             in_list, match_state = state_in_list(child_state, open_list)
