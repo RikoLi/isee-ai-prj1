@@ -359,8 +359,16 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
         return curr_idx, curr_state
 
 
-    def state_in_list(state, list):
-        pass
+    def state_in_list(state, state_list):
+        for each in state_list:
+            if each == state:
+                in_list = True
+                match_state = each
+                break
+            else:
+                in_list = False
+                match_state = None
+
         return in_list, match_state
 
     def get_path(curr_state):
@@ -377,7 +385,15 @@ def astar_search_for_puzzle_problem(init_state, dst_state):
         return moves
 
     def expand_state(curr_state):
-        pass
+        moves = [0, 1, 2, 3]
+        childs = []
+
+        # One-step moving
+        for each in moves:
+            valid_op, next_state = once_move(curr_state, each)
+            if valid_op:
+                childs.append(next_state)
+        
         return childs
 
     def update_cost(child_state, dst_state, metric='euclidean'):
