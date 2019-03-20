@@ -409,34 +409,33 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
         if metric == 'euclidean':
             curr_vec = np.reshape(child_state.state, (-1, 1))
             dst_vec = np.reshape(dst_state.state, (-1, 1))
-            forward_cost = np.linalg.norm(curr_vec-dst_vec)
+            child_state.h = np.linalg.norm(curr_vec-dst_vec)
 
         # Blank position metric
         elif metric == 'blank_pos':
             dst_pos = np.argwhere(dst_state.state==-1)
             curr_pos = np.argwhere(curr_state.state==-1)
-            forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=1)
+            child_state.h = np.linalg.norm(dst_pos-curr_pos, ord=1)
             
         # Chebyshev distance
         elif metric == 'chebyshev':
             dst_pos = np.argwhere(dst_state.state==-1)
             curr_pos = np.argwhere(curr_state.state==-1)
-            forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=np.inf)
+            child_state.h = np.linalg.norm(dst_pos-curr_pos, ord=np.inf)
 
         # The sum of distances of the tiles from their goal positions
         elif metric == 'tiles_pos':
             dst_pos = np.argwhere(dst_state.state==-1)
             curr_pos = np.argwhere(curr_state.state==-1)
-            forward_cost = np.linalg.norm(dst_pos-curr_pos, ord=1)
-            
+            child_state.h = np.linalg.norm(dst_pos-curr_pos, ord=1)
+
             for i in range(dst_state.square_size-1):
                 dst_pos = np.argwhere(dst_state.state==(i+1))
                 curr_pos = np.argwhere(curr_state.state==(i+1))
-                forward_cost += np.linalg.norm(dst_pos-curr_pos, ord=1)
+                child_state.h += np.linalg.norm(dst_pos-curr_pos, ord=1)
 
         
         # Update child state properties
-        child_state.h = forward_cost
         child_state.g += 1
         
         return child_state
@@ -481,6 +480,7 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
 
             # Assign cost to child state. You can also do this in Expand operation
             child_state = update_cost(child_state, dst_state, heuristics)
+            print('g:', child_state.g, 'h:', child_state.h, 'total cost:', child_state.g + child_state.h)
 
             # Find a better state in open_list
             in_list, match_state = state_in_list(child_state, open_list)
@@ -488,4 +488,3 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
                 continue
 
             open_list.append(child_state)  
-
