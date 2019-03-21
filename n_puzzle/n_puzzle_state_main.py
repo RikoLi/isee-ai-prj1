@@ -4,20 +4,20 @@ import numpy as np
 def main():
 
     # Create a initial state randomly
-    # square_size = 4
-    square_size = 3
+    square_size = 4
+    # square_size = 3
 
     init_state = PuzzleState(square_size=square_size)
-    dst = [1, 2, 3,
-           8,-1, 6,
-           7, 4, 5]
-    # dst = [1,  4, 5,  14,
-    #        2,  6, 13, 15,
-    #        11, 7, -1, 10,
-    #        8,  9, 12, 3  ]
+    # dst = [1, 2, 3,
+    #        8,-1, 6,
+    #        7, 4, 5]
+    dst = [1,  4, 5,  14,
+           2,  6, 13, 15,
+           11, 7, -1, 10,
+           8,  9, 12, 3  ]
     init_state.state = np.asarray(dst).reshape(square_size, square_size)
 
-    move_list = generate_moves(90)
+    move_list = generate_moves(30)
     init_state.state = runs(init_state, move_list).state
 
     # Set a determined destination state

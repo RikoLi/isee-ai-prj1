@@ -111,7 +111,7 @@ where $h^*(x,y)$ is the true cost in the game.
 
 Therefore, $h(x,y)$ can be used as a heuristic function.
 
-#### 4. Sum of distance of misplaced boxes
+#### 4. Sum of distances of misplaced boxes
 This metric works in this way:
 
 $$
@@ -127,23 +127,24 @@ The equation calculates the sum of Manhattan distance of all misplaced boxes on 
 ### Performance
 In this section, let us evaluate the performance of aforementioned 4 heuristic functions.
 
-...pics...
+When the initial state is fixed, Metric 2~4 usually work better than Metric 1, finding the shortest way to the goal state. Metric 1 can also find a way out but takes more steps.
 
+For both testing samples of size of 3 and 4, if we set the initial move steps lower than 60, in most cases, all of the designs can find a solution in a reasonable time. If we set move steps much higher, however, such as 90 or 100, they work terriblely, meaning that they can hardly find a solution. In several cases, Metric 4 find a way out after a 90-step initial movement, which supports that this heuristic function does work but not works as effectively as before due to the increasing complexity of state space.
 
 
 #### Which one to choose?
 I did lots of experiments, testing the performance of those functions. However, it is quite hard for me to make a dicision, because the performance varies from time to time, possibly resulting from undetermined complexity of state space trees that are randomly generated in each test.
 
-To choose a suitable function, I assume some naive analysis. The Euclidean distance is calculated in a high dimensional space, which actually wastes lots of resources on float arithmetic operations. Comparing Metric 2&3, I believe that these two metrics are not convincing enough due to the exploitation of only one box on the playboard, though these two functions are less time-consuming than the Euclidean. Metric 4, which I consider as the best metric in this project, combines the less calculation with the use of information from all boxes. So, I prefer **Metric 4** to be the final heuristic function.
+To choose a suitable function, I assume some naive premise. The Euclidean distance is calculated in a high dimensional space, which actually wastes lots of resources on float arithmetic operations. Comparing Metric 2&3, I believe that these two metrics are not convincing enough due to the exploitation of only one box on the playboard, though these two functions are less time-consuming than the Euclidean. Metric 4, which I consider as the best metric in this project, combines the less calculation with the use of information from all boxes. So, I prefer **Metric 4** to be the final heuristic function.
 
 **Attention:** The code file contains all of the functions I designed. You can choose whichever you like to solve the problem. Just change the parameter `heuristics`. Here is a list of functions:
 
 Name | Metric
 ---|---
-'euclidean' | Euclidean distance
-'blank_pos' | Position of the blank box
-'chebyshev' | Chebyshev distance
-'tiles_pos' (default) | Sum of distance of misplaced boxes
+'euclidean' | 1. Euclidean distance
+'blank_pos' | 2. Position of the blank box
+'chebyshev' | 3. Chebyshev distance
+'tiles_pos' (default) | 4. Sum of distance of misplaced boxes
 
 ---
 

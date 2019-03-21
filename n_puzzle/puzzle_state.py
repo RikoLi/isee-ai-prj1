@@ -480,7 +480,7 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
 
             # Assign cost to child state. You can also do this in Expand operation
             child_state = update_cost(child_state, dst_state, heuristics)
-            print('g:', child_state.g, 'h:', child_state.h, 'total cost:', child_state.g + child_state.h)
+            # print('g:', child_state.g, 'h:', child_state.h, 'total cost:', child_state.g + child_state.h)
 
             # Find a better state in open_list
             in_list, match_state = state_in_list(child_state, open_list)
