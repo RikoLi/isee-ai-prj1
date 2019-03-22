@@ -56,7 +56,13 @@ def get_available_actions(current_state):
     assert isinstance(current_state, np.ndarray), 'current_state should be numpy ndarray'
     assert current_state.shape == (3, 3), 'current_state: expect 3x3 array, get {}'.format(current_state.shape)
 
-    pass
+    action_list = []
+    for i in range(current_state.shape[0]):
+        for j in range(current_state.shape[1]):
+            if current_state[i][j] == 0:
+                action_list.append((i, j))
+        
+    return action_list
 
 
 def action_result(current_state, action, player):
@@ -65,21 +71,27 @@ def action_result(current_state, action, player):
     :param current_state: current state of the game, it's a 3x3 array
     :param action: current action, tuple type
     :param player:
-    :return:
+    :return: next_state
     """
     assert isinstance(current_state, np.ndarray), 'current_state should be numpy ndarray'
     assert current_state.shape == (3, 3), 'current_state: expect 3x3 array, get {}'.format(current_state.shape)
     assert player in [1, -1], 'player should be either 1(computer) or -1(you)'
 
-    pass
+    # Only for computer
+    next_state = current_state
+    if player == 1:
+        next_state[action[0]][action[1]] = 1
+    else:
+        print('Wrong input of parameter "player"!')
 
+    return next_state
 
 def min_value(current_state, depth):
     """
     recursively call min_value and max_value, min_value is for human player(-1)
     :param current_state:
     :param depth:
-    :return:
+    :return: minimax_value
     """
     pass
 
@@ -89,7 +101,7 @@ def max_value(current_state, depth):
     recursively call min_value and max_value, max_value is for computer(1)
     :param current_state:
     :param depth:
-    :return:
+    :return: minimax_value
     """
     pass
 
@@ -101,6 +113,7 @@ def utility(current_state, flag):
     :param flag:
     :return:
     """
+    # Need evaluation function...
     pass
 
 
