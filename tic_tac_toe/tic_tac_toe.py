@@ -70,8 +70,8 @@ def action_result(current_state, action, player):
     update the game state given the input action and player
     :param current_state: current state of the game, it's a 3x3 array
     :param action: current action, tuple type
-    :param player:
-    :return: next_state
+    :param player: who makes the decision in current state
+    :return: next state
     """
     assert isinstance(current_state, np.ndarray), 'current_state should be numpy ndarray'
     assert current_state.shape == (3, 3), 'current_state: expect 3x3 array, get {}'.format(current_state.shape)
@@ -89,32 +89,64 @@ def action_result(current_state, action, player):
 def min_value(current_state, depth):
     """
     recursively call min_value and max_value, min_value is for human player(-1)
-    :param current_state:
-    :param depth:
-    :return: minimax_value
+    :param current_state: current state of the game, it's a 3x3 array
+    :param depth: searching depth from current state
+    :return: minimum value of available children states
     """
-    pass
+    if depth == 0:
+        return utility(current_state, 'min')
+    else:
+        values = []
+        action_list = get_available_actions(current_state)
+        for action in action_list:
+            values.append(max_value(action_result(current_state, action, -1), depth-1))
+
+        min_id = int(np.argmin(values))
+        return values[min_id]
+    
 
 
 def max_value(current_state, depth):
     """
     recursively call min_value and max_value, max_value is for computer(1)
-    :param current_state:
-    :param depth:
-    :return: minimax_value
+    :param current_state: current state of the game, it's a 3x3 array
+    :param depth: searching depth from current state
+    :return: maximum value of available children states
     """
-    pass
+    if depth == 0:
+        return utility(current_state, 'max')
+    else:
+        values = []
+        action_list = get_available_actions(current_state)
+        for action in action_list:
+            values.append(min_value(action_result(current_state, action, 1), depth-1))
+
+        max_id = int(np.argmax(values))
+        return values[max_id]
 
 
 def utility(current_state, flag):
     """
     return utility function given current state and flag
-    :param current_state:
-    :param flag:
-    :return:
+    :param current_state: current state of the game, it's a 3x3 array
+    :param flag: which kind of state, MIN or MAX
+    :return: evaluation of this state
     """
-    # Need evaluation function...
-    pass
+    # Evaluation function, depends on 'flag'
+    if flag == 'min':
+        # Evaluation function for MIN states
+        
+        
+        
+        pass
+    elif flag == 'max':
+        # Evaluation function fro MAX states
+        
+        
+        
+        pass
+    else:
+        print('Invalid input of parameter "flag"!')
 
 
 # Do not modify the following code
