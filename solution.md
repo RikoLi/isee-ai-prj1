@@ -21,11 +21,13 @@ where $h^{*}(n)$ is the true cost to a nearest goal and $c(n,a,n')$ is the cost 
 
 In the N-Puzzle problem, different states with particular position of each number can be considered as different nodes in a tree or a graph. We need to use some metrics to evaluate the "similarity" between the initial node and the goal node. All of the valid metrics can act as heuristics.
 
-I developed 4 portential distance metrics as heuristics:
+I developed 6 portential distance metrics as heuristics:
 1. Euclidean distance
 1. Position of the blank
 1. Chebyshev distance
-1. Sum of distance of misplaced boxes
+1. Hamming distance
+1. Manhattan distance
+1. Mixed method
 
 ### Insight
 #### 1. Euclidean distance
@@ -111,40 +113,68 @@ where $h^*(x,y)$ is the true cost in the game.
 
 Therefore, $h(x,y)$ can be used as a heuristic function.
 
-#### 4. Sum of distances of misplaced boxes
+#### 4. Hamming distance
+This metric consider the playboard as a binary array. For each element in current state, except the blank box, this metric will check whether the element is at the same place with that in goal state. If they are at the same place, we get a 0, otherwise we get a 1. In this way, we finally convert the playboard into a binary array with 0 and 1 only. Sum up all the 1 in the array, then we get a number showing the total amount of misplaced boxes, except the blank box.
+
+This metric must be heuristic because the amount of misplaced boxes must be non-negative and in a determined state, it must be a fixed value.
+
+#### 5. Manhattan distance
 This metric works in this way:
 
 $$
-h(n) = \sum_{i=0}^{K-1}\left(|x_i-x_{ig}|+|y_i-y_{ig}|\right)
+h(n) = \sum_{i=0}^{K-1}||\bold{x}_i - \bold{x}_{ig}||_1,\space Value(\bold{x}_i)\neq-1
 $$
 
-where $n$ indicates the $n$th state, $K$ indicates the size of playboard, $x_i$, $y_i$ indicate the $i$th box's position and $x_{ig}$, $y_{ig}$ indicate the $i$th box's goal position.
+where $\bold{x}_i$ is a two-dimension vector that illustrates the $i$th box's position, $\bold{x}_g$ is a two-dimension vector that illustrates the $i$th box's goal position, $K$ is the total amount of the boxes, and $Value(\bold{x}_i)$ means that the box value corresponds to vector $\bold{x}_i$.
 
-The equation calculates the sum of Manhattan distance of all misplaced boxes on the playboard, acting as a heuristic function of state $n$. Since the Manhattan distance is a heuristic function in a vertically-and-horizontally-move-only environment, the sum of the Manhattan, thus, should be a available heuristic function as well.
+The equation calculates the sum of Manhattan distance of all misplaced boxes on the playboard, except the blank box, acting as a heuristic function of state $n$. Since the Manhattan distance is a heuristic function in a vertically-and-horizontally-move-only environment, the sum of the Manhattan, thus, should be a available heuristic function as well.
+
+#### 6. Mixed method
+Just like what the title says, "mixed method" uses a bundle of methods together. It can contain any possible terms, combining in this way:
+
+$$
+h(n) = \sum_i^M \alpha_i h_i(n)
+$$
+
+where $M$ is the total amount of sub-heuristics, $\alpha_i$ is a weight coefficient, and $h_i(n)$ is the $i$th sub-heuristics.
+
+The insight to sum them up stems from a thought that if one metric works, together work better.
+
+In this project, we only use Metric 4 and 5 together as a mixed method. The implementation is very easy, since they performs pretty well in following performance tests. Parameters are setted like this:
+
+$$
+h(n) = 0.5h_{hamming}(n) + 0.5h_{manhattan}(n)
+$$
+
+This metric should be available, since the sum and multiplication operation are linear so that the linear combination of sub-heuristics will still be heuristic.
 
 
 
 ### Performance
-In this section, let us evaluate the performance of aforementioned 4 heuristic functions.
+In this section, let us evaluate the performance of aforementioned 6 heuristic functions.
 
-When the initial state is fixed, Metric 2~4 usually work better than Metric 1, finding the shortest way to the goal state. Metric 1 can also find a way out but takes more steps.
+When the initial state is fixed, Metric 2~6 usually work better than Metric 1, finding the shortest way to the goal state. Metric 1 can also find a way out but takes more steps.
 
-For both testing samples of size of 3 and 4, if we set the initial move steps lower than 60, in most cases, all of the designs can find a solution in a reasonable time. If we set move steps much higher, however, such as 90 or 100, they work terriblely, meaning that they can hardly find a solution. In several cases, Metric 4 find a way out after a 90-step initial movement, which supports that this heuristic function does work but not works as effectively as before due to the increasing complexity of state space.
+For both testing samples of size of 3 and 4, if we set the initial move steps lower than 60, in most cases, all of the designs, evaluated by Metric 2&3 can find a solution in a reasonable time. If we set move steps much higher, however, such as 90 or 100, they work terriblely, meaning that they can hardly find a solution. In most cases, Metric 4~6 find a way out after a higher-than-90-step initial movement, which supports that these heuristic functions do work in solving the problem in complexer environments.
 
 
 #### Which one to choose?
-I did lots of experiments, testing the performance of those functions. However, it is quite hard for me to make a dicision, because the performance varies from time to time, possibly resulting from undetermined complexity of state space trees that are randomly generated in each test.
+I did lots of experiments, testing the performance of those functions. However, it is quite hard for me to make a dicision, because the performance varies from time to time, possibly resulting from undetermined complexity of state space trees that are randomly generated in each test. But in general, some functions are better than others, such as Metric 4~6.
 
-To choose a suitable function, I assume some naive premise. The Euclidean distance is calculated in a high dimensional space, which actually wastes lots of resources on float arithmetic operations. Comparing Metric 2&3, I believe that these two metrics are not convincing enough due to the exploitation of only one box on the playboard, though these two functions are less time-consuming than the Euclidean. Metric 4, which I consider as the best metric in this project, combines the less calculation with the use of information from all boxes. So, I prefer **Metric 4** to be the final heuristic function.
+To choose a suitable function, I assume some naive premise. The Euclidean distance is calculated in a high dimensional space, which actually wastes lots of resources on float arithmetic operations. Comparing Metric 2&3, I believe that these two metrics are not convincing enough due to the exploitation of only one box on the playboard, though these two functions are less time-consuming than the Euclidean. Metric 4, which I consider as the best metric in this project, combines the less calculation with the use of information from all boxes. So, I prefer **Metric 4: Hamming distance** to be the final heuristic function.
+
+At first, I predict that Metric 6, the mixed method, will perform much better. However, in experiments, it did not show any advancements than its components: Metric 4&5. That's why I give up choosing it to be the final function.
 
 **Attention:** The code file contains all of the functions I designed. You can choose whichever you like to solve the problem. Just change the parameter `heuristics`. Here is a list of functions:
 
 Name | Metric
 ---|---
-'euclidean' | 1. Euclidean distance
-'blank_pos' | 2. Position of the blank box
-'chebyshev' | 3. Chebyshev distance
-'tiles_pos' (default) | 4. Sum of distance of misplaced boxes
+'euclidean' (default) | Euclidean distance
+'blank_pos' | Position of the blank box
+'chebyshev' | Chebyshev distance
+'hamming' | Hamming distance
+'manhattan' | Manhattan distance
+'mix' | Mixed method
 
 ---
 

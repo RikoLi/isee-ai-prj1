@@ -405,6 +405,9 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
         '''
         Update child_state.h and child_state.g
         '''
+        # Initialization
+        child_state.h = 0
+
         # Euclidean distance
         if metric == 'euclidean':
             curr_vec = np.reshape(child_state.state, (-1, 1))
@@ -442,12 +445,17 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
 
         # Mixed
         elif metric == 'mix':
+            h1 = 0
+            h2 = 0
+
             # Manhattan
             for i in range(dst_state.square_size-1):
                 dst_pos = np.argwhere(dst_state.state==(i+1))
                 curr_pos = np.argwhere(child_state.state==(i+1))
-                child_state.h += np.linalg.norm(dst_pos-curr_pos, ord=1)
+                h1 += np.linalg.norm(dst_pos-curr_pos, ord=1)
             
+            
+
             # Hamming
             curr_vec = np.reshape(child_state.state, (1, -1))[0]
             dst_vec = np.reshape(dst_state.state, (1, -1))[0]
@@ -455,8 +463,10 @@ def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean
             for each in curr_vec:
                 index = np.argwhere(curr_vec==each)
                 if dst_vec[index] != each and each != -1:
-                    child_state.h += 1
-        
+                    h2 += 1
+
+            child_state.h += 0.5*h1 + 0.5*h2
+
         # Update child state properties
         child_state.g += 1
         
