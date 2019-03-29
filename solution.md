@@ -182,6 +182,50 @@ Name | Metric
 
 ## Tic-Tac-Toe Problem
 
+In this section, we apply a Minimax search algorithm to solve a Tic-Tac-Toe problem. It performs pretty well, always achieving a tie if the human player does not make bad decisions deliberately. In other words, the AI never fails in the game.
+
+### Prerequisite
+* tic_tac_toe.py
+* main_tic_tac_toe.py
+
+### Rules
+Before the algorithm design, let us determine some rules:
+* AI plays "O", human plays "X"
+* 1 stands for "O", -1 stands for "X"
+* AI is the MAX user, human is the MIN user
+* The depth of Minimax search is 3
+* Human goes first
+
+### Brief Process of the Algorithm
+Particularly for the AI's decision process.
+1. Find out all future states of current state
+1. Evaluate the utility of each possible future state via **Depth-limited Minimax Search**
+1. Achieve the future state where there is the largest utility
+
+### Details
+This part shows you how to implement a Minimax search algorithm with a given framework.
+
+#### Important Functions
+We have several important functions that need to be designed:
+
+`get_available_actions(current_state)`: This function returns all available actions with a given state. Parameter `current_state` is a 3-by-3 numpy array, representing the current game state. Return value is `action_list`, a list of tuples storaging available actions.
+
+`action_result(current_state, action, player)`: This function updates the game state with a certain action and a certain player. Parameter `current_state` stands for current game state; `action` is a tuple, standing for current action; `player` is an integer, standing for AI or human. Return value is a 3-by-3 numpy array, representing the next state after applying the action.
+
+`min_value(current_state, depth)` and `max_value(current_state, depth)`: These functions are used to calculate the minimax value for each node in the search tree. Using which function depends on who the current user (AI or human) is. According to the rules, MAX for AI and MIN for human. Parameter `current_state` is the current game state; `depth` is the remaining search depth in the future. Return value is a integer, representing the minimax value of current state.
+
+`utility(current_state, flag)`: This function calculates the utility of a state, acting as an evaluation of the game state (who is the most possible winner). Parameter `current_state` is the current game state; `flag` determines the user, because different users have different utility calculating methods. Return value is a integer, representing the utility.
+
+#### Keep-in-mind
+There are quite a few problems I met with during the design of the algorithm. Here I illustrate some typical members.
+
+**1. Recursive calling**
 
 
+**2. Scoring function**
 
+
+**3. Assignment and copy()**
+
+
+**4.**

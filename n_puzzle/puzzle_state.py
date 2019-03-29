@@ -207,7 +207,7 @@ def run_moves(curr_state, dst_state, moves):
         flag of moves: True - We can get 'dst_state' from 'curr_state' by 'moves'
     """
     pre_state = curr_state.clone()
-    next_state = None
+    next_state = curr_state.clone()
 
     for move in moves:
         valid_move, next_state = once_move(pre_state, move)
@@ -232,7 +232,7 @@ def runs(curr_state, moves):
     :return:
     """
     pre_state = curr_state.clone()
-    next_state = None
+    next_state = curr_state.clone()
 
     for move in moves:
         valid_move, next_state = once_move(pre_state, move)
@@ -251,7 +251,7 @@ def print_moves(init_state, moves):
     init_state.display()
 
     pre_state = init_state.clone()
-    next_state = None
+    next_state = init_state.clone()
 
     for idx, move in enumerate(moves):
         if move == Move.Up:  # Number moves up, blank moves down
