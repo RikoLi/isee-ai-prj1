@@ -40,7 +40,7 @@ def MinimaxSearch(current_state):
     values = []
     depth = 3
     for action in actions:
-        values.append(min_value(action_result(game_state.copy(), action, 1), depth))
+        values.append(min_value(action_result(game_state.copy(), action, 1)))
     max_ind = int(np.argmax(values))
     row, col = actions[max_ind][0], actions[max_ind][1]
 
@@ -61,7 +61,7 @@ def get_available_actions(current_state):
         for j in range(current_state.shape[1]):
             if current_state[i][j] == 0:
                 action_list.append((i, j))
-        
+
     return action_list
 
 
@@ -78,75 +78,144 @@ def action_result(current_state, action, player):
     assert player in [1, -1], 'player should be either 1(computer) or -1(you)'
 
     # Only for computer
-    next_state = current_state
     if player == 1:
+        next_state = current_state
         next_state[action[0]][action[1]] = 1
+        return next_state
     else:
         print('Wrong input of parameter "player"!')
 
-    return next_state
 
-def min_value(current_state, depth):
+def min_value(current_state):
     """
     recursively call min_value and max_value, min_value is for human player(-1)
     :param current_state: current state of the game, it's a 3x3 array
     :param depth: searching depth from current state
     :return: minimum value of available children states
     """
-    if depth == 0:
+    # if depth == 0:
+    #     return utility(current_state, 'min')
+    # else:
+    values = []
+    action_list = get_available_actions(current_state)
+    if action_list == []:
         return utility(current_state, 'min')
-    else:
-        values = []
-        action_list = get_available_actions(current_state)
-        for action in action_list:
-            values.append(max_value(action_result(current_state, action, -1), depth-1))
+    for action in action_list:
+        values.append(max_value(action_result(current_state, action, 1)))
 
-        min_id = int(np.argmin(values))
-        return values[min_id]
+    min_id = int(np.argmin(values))
+    return values[min_id]
     
 
 
-def max_value(current_state, depth):
+def max_value(current_state):
     """
     recursively call min_value and max_value, max_value is for computer(1)
     :param current_state: current state of the game, it's a 3x3 array
     :param depth: searching depth from current state
     :return: maximum value of available children states
     """
-    if depth == 0:
+    # if depth == 0:
+    #     return utility(current_state, 'max')
+    # else:
+    values = []
+    action_list = get_available_actions(current_state)
+    if action_list == []:
         return utility(current_state, 'max')
-    else:
-        values = []
-        action_list = get_available_actions(current_state)
-        for action in action_list:
-            values.append(min_value(action_result(current_state, action, 1), depth-1))
+    for action in action_list:
+        values.append(min_value(action_result(current_state, action, 1)))
 
-        max_id = int(np.argmax(values))
-        return values[max_id]
+    max_id = int(np.argmax(values))
+    return values[max_id]
 
 
 def utility(current_state, flag):
     """
     return utility function given current state and flag
     :param current_state: current state of the game, it's a 3x3 array
-    :param flag: which kind of state, MIN or MAX
+    :param flag:
     :return: evaluation of this state
     """
-    # Evaluation function, depends on 'flag'
-    if flag == 'min':
-        # Evaluation function for MIN states
-        
-        
-        
-        pass
-    elif flag == 'max':
-        # Evaluation function fro MAX states
-        
-        
-        
-        pass
-    else:
-        print('Invalid input of parameter "flag"!')
+    # Initialization
+    ai_value = 0
+    rows = current_state.shape[0]
+    cols = current_state.shape[1]
+
+    # Row detection
+    for i in range(rows):
+        temp_value = 0
+        for j in range(cols):
+            if j == 0:
+                if current_state[i][j] == 1 and current_state[i][j+1] == 1 and current_state[i][j+2] == 1:
+                    temp_value += 10
+                    return temp_value
+                elif current_state[i][j] == -1 and current_state[i][j+1] == -1 and current_state[i][j+2] == -1:
+                    temp_value -= 10
+                    return temp_value
+            elif current_state[i][j] == 1:
+                temp_value += 1
+            elif current_state[i][j] == 0:
+                continue
+            else:
+                temp_value -= 1
+        ai_value += temp_value
+
+    # Column detection
+    for i in range(cols):
+        temp_value = 0
+        for j in range(rows):
+            if j == 0:
+                if current_state[i][j] == 1 and current_state[i][j+1] == 1 and current_state[i][j+2] == 1:
+                    temp_value += 10
+                    return temp_value
+                elif current_state[i][j] == -1 and current_state[i][j+1] == -1 and current_state[i][j+2] == -1:
+                    temp_value -= 10
+                    return temp_value
+            elif current_state[i][j] == 1:
+                temp_value += 1
+            elif current_state[i][j] == 0:
+                continue
+            else:
+                temp_value -= 1
+        ai_value += temp_value
+
+    # Diagonal detection
+    temp_value = 0
+    for i in range(rows):
+        if i == 0:
+            if current_state[i][i] == 1 and current_state[i+1][i+1] == 1 and current_state[i+2][i+2] == 1:
+                temp_value += 10
+                print('dd')
+                return temp_value
+            elif current_state[i][i] == -1 and current_state[i+1][i+1] == -1 and current_state[i+2][i+2] == -1:
+                temp_value -= 10
+                return temp_value
+        elif current_state[i][i] == 1:
+            temp_value += 1
+        elif current_state[i][i] == 0:
+            continue
+        else:
+            temp_value -= 1
+    ai_value += temp_value
+
+    temp_value = 0
+    for i in range(rows):
+        if i == 0:
+            if current_state[i][i+2] == 1 and current_state[i+1][i+1] == 1 and current_state[i+2][i] == 1:
+                temp_value += 10
+                return temp_value
+            elif current_state[i][i+2] == -1 and current_state[i+1][i+1] == -1 and current_state[i+2][i] == -1:
+                temp_value -= 10
+                return temp_value
+        elif current_state[i][rows-i-1] == 1:
+            temp_value += 1
+        elif current_state[i][rows-i-1] == 0:
+            continue
+        else:
+            temp_value -= 1
+    ai_value += temp_value
+    
+    return ai_value
 
 
 # Do not modify the following code
