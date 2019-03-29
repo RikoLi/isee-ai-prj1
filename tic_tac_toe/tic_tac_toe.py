@@ -40,7 +40,7 @@ def MinimaxSearch(current_state):
     values = []
     depth = 3
     for action in actions:
-        values.append(min_value(action_result(game_state.copy(), action, 1)))
+        values.append(min_value(action_result(game_state.copy(), action, 1), depth))
     max_ind = int(np.argmax(values))
     row, col = actions[max_ind][0], actions[max_ind][1]
 
@@ -77,56 +77,61 @@ def action_result(current_state, action, player):
     assert current_state.shape == (3, 3), 'current_state: expect 3x3 array, get {}'.format(current_state.shape)
     assert player in [1, -1], 'player should be either 1(computer) or -1(you)'
 
-    # Only for computer
     if player == 1:
-        next_state = current_state
-        next_state[action[0]][action[1]] = 1
-        return next_state
+        current_state[action[0]][action[1]] = 1
+        return current_state
+    elif player == -1:
+        current_state[action[0]][action[1]] = -1
+        return current_state
     else:
         print('Wrong input of parameter "player"!')
 
 
-def min_value(current_state):
+def min_value(current_state, depth):
     """
     recursively call min_value and max_value, min_value is for human player(-1)
     :param current_state: current state of the game, it's a 3x3 array
     :param depth: searching depth from current state
     :return: minimum value of available children states
     """
-    # if depth == 0:
-    #     return utility(current_state, 'min')
-    # else:
-    values = []
-    action_list = get_available_actions(current_state)
-    if action_list == []:
+    if depth == 0:
         return utility(current_state, 'min')
-    for action in action_list:
-        values.append(max_value(action_result(current_state, action, 1)))
+    else:
+        game_state = current_state.copy()
+        action_list = get_available_actions(game_state)
+        values = []
 
-    min_id = int(np.argmin(values))
-    return values[min_id]
+        if action_list == []:
+            return utility(current_state, 'min')
+        for action in action_list:
+            values.append(max_value(action_result(game_state.copy(), action, -1), depth-1))
+
+        min_id = int(np.argmin(values))
+        return values[min_id]
     
 
 
-def max_value(current_state):
+def max_value(current_state, depth):
     """
     recursively call min_value and max_value, max_value is for computer(1)
     :param current_state: current state of the game, it's a 3x3 array
     :param depth: searching depth from current state
     :return: maximum value of available children states
     """
-    # if depth == 0:
-    #     return utility(current_state, 'max')
-    # else:
-    values = []
-    action_list = get_available_actions(current_state)
-    if action_list == []:
+    if depth == 0:
         return utility(current_state, 'max')
-    for action in action_list:
-        values.append(min_value(action_result(current_state, action, 1)))
+    else:
+        game_state = current_state.copy()
+        action_list = get_available_actions(game_state)
+        values = []
 
-    max_id = int(np.argmax(values))
-    return values[max_id]
+        if action_list == []:
+            return utility(current_state, 'max')
+        for action in action_list:
+            values.append(min_value(action_result(game_state.copy(), action, 1), depth-1))
+
+        max_id = int(np.argmax(values))
+        return values[max_id]
 
 
 def utility(current_state, flag):
@@ -137,85 +142,55 @@ def utility(current_state, flag):
     :return: evaluation of this state
     """
     # Initialization
-    ai_value = 0
+    score = 0
+    num = 0
     rows = current_state.shape[0]
     cols = current_state.shape[1]
 
-    # Row detection
-    for i in range(rows):
-        temp_value = 0
-        for j in range(cols):
-            if j == 0:
-                if current_state[i][j] == 1 and current_state[i][j+1] == 1 and current_state[i][j+2] == 1:
-                    temp_value += 10
-                    return temp_value
-                elif current_state[i][j] == -1 and current_state[i][j+1] == -1 and current_state[i][j+2] == -1:
-                    temp_value -= 10
-                    return temp_value
-            elif current_state[i][j] == 1:
-                temp_value += 1
-            elif current_state[i][j] == 0:
-                continue
-            else:
-                temp_value -= 1
-        ai_value += temp_value
+    def getScore(num, flag):
+        score = 0
 
-    # Column detection
+        if flag == 'max':
+            if num == 2:
+                score += 300
+            elif num == -2:
+                score -= 500
+            elif num == 3:
+                score += 1000
+            elif num == -3:
+                score -= 2000
+        else:
+            if num == 2:
+                score -= 500
+            elif num == -2:
+                score += 300
+            elif num == 3:
+                score -= 2000
+            elif num == -3:
+                score += 1000
+
+        return score
+
+    # Rows
+    for i in range(rows):
+        num = current_state[i][0] + current_state[i][1] + current_state[i][2]
+        score += getScore(num, flag)
+
+    # Columns
     for i in range(cols):
-        temp_value = 0
-        for j in range(rows):
-            if j == 0:
-                if current_state[i][j] == 1 and current_state[i][j+1] == 1 and current_state[i][j+2] == 1:
-                    temp_value += 10
-                    return temp_value
-                elif current_state[i][j] == -1 and current_state[i][j+1] == -1 and current_state[i][j+2] == -1:
-                    temp_value -= 10
-                    return temp_value
-            elif current_state[i][j] == 1:
-                temp_value += 1
-            elif current_state[i][j] == 0:
-                continue
-            else:
-                temp_value -= 1
-        ai_value += temp_value
+        num = current_state[0][i] + current_state[1][i] + current_state[2][i]
+        score += getScore(num, flag)
 
-    # Diagonal detection
-    temp_value = 0
+    # Diagonal
+    num = 0
+    temp = 0
     for i in range(rows):
-        if i == 0:
-            if current_state[i][i] == 1 and current_state[i+1][i+1] == 1 and current_state[i+2][i+2] == 1:
-                temp_value += 10
-                print('dd')
-                return temp_value
-            elif current_state[i][i] == -1 and current_state[i+1][i+1] == -1 and current_state[i+2][i+2] == -1:
-                temp_value -= 10
-                return temp_value
-        elif current_state[i][i] == 1:
-            temp_value += 1
-        elif current_state[i][i] == 0:
-            continue
-        else:
-            temp_value -= 1
-    ai_value += temp_value
+        num += current_state[i][i]
+        temp += current_state[i][2-i]
+    score += getScore(num, flag)
+    score += getScore(temp, flag)
 
-    temp_value = 0
-    for i in range(rows):
-        if i == 0:
-            if current_state[i][i+2] == 1 and current_state[i+1][i+1] == 1 and current_state[i+2][i] == 1:
-                temp_value += 10
-                return temp_value
-            elif current_state[i][i+2] == -1 and current_state[i+1][i+1] == -1 and current_state[i+2][i] == -1:
-                temp_value -= 10
-                return temp_value
-        elif current_state[i][rows-i-1] == 1:
-            temp_value += 1
-        elif current_state[i][rows-i-1] == 0:
-            continue
-        else:
-            temp_value -= 1
-    ai_value += temp_value
-    
-    return ai_value
+    return score
 
 
 # Do not modify the following code
