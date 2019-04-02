@@ -336,7 +336,7 @@ NOTICE:
    
 3. It's just a simple example of A-Star search. You can implement this function in your own design.  
 """
-def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='euclidean'):
+def astar_search_for_puzzle_problem(init_state, dst_state, heuristics='hamming'):
     """
     Use AStar-search to find the path from init_state to dst_state
     :param init_state:  Initial puzzle state
